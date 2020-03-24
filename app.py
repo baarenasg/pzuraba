@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 
 mapbox_access_token = "pk.eyJ1IjoiYmFhcmVuYXNnIiwiYSI6ImNrODJlZWwyMjBnYTQzZHBjZDFwcTJkeHgifQ.zPN5UFpYwuXLC9D8xBtAOA"
 
-app = dash.Dash()
+app = dash.Dash(__name__)
 
 server = app.server
 #Coordenadas
@@ -32,7 +32,7 @@ for tic in codigos:
 
 app.layout = html.Div([
     html.Div([
-        html.Img(className="logo", src=app.get_asset_url("assets/logo.png"), style={'display':'inline-block'}),
+        html.Img(className="logo", src=app.get_asset_url("/assets/logo.png"), style={'display':'inline-block'}),
         html.H1('Red de monitoreo piezométrica del Golfo de Urabá',style={'display':'inline-block'})]),
     html.Div([
         html.H3('Seleccione los puntos de monitoreo',style={'marginLeft':'30px','display':'inline-block'}),
@@ -122,4 +122,4 @@ def update_graph(n_clicks, stock_ticker):
     return fig
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
