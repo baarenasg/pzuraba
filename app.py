@@ -32,7 +32,7 @@ for tic in codigos:
 
 app.layout = html.Div([
     html.Div([
-        html.Img(className="logo", src=app.get_asset_url("/assets/logo.png"), style={'display':'inline-block'}),
+        html.Img(className="logo", src= '/assets/logo.png', style={'display':'inline-block'}),
         html.H1('Red de monitoreo piezométrica del Golfo de Urabá',style={'display':'inline-block'})]),
     html.Div([
         html.H3('Seleccione los puntos de monitoreo',style={'marginLeft':'30px','display':'inline-block'}),
