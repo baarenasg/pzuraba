@@ -66,8 +66,8 @@ app.layout = html.Div([
                   )],
                   'layout':go.Layout(
                   autosize=False,
-                  width=1000,
-                  height=1000,
+                  width=7000,
+                  height=7000,
                   hovermode='closest',
                   showlegend=False,
                   mapbox=dict(
