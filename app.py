@@ -125,8 +125,7 @@ def update_map(n_clicks, stock_ticker):
                     name="Seleccionados",
                     marker=go.scattermapbox.Marker(
                         size=17,
-                        color='rgb(0, 0, 255)',
-                        opacity=0.7),
+                        color='rgb(0, 0, 255)'),
                     text=df2.codigo,
                     hoverinfo='text'),
                 go.Scattermapbox(
@@ -136,8 +135,7 @@ def update_map(n_clicks, stock_ticker):
                     name="No seleccionados",
                     marker=go.scattermapbox.Marker(
                         size=17,
-                        color='rgb(255, 0, 0)',
-                        opacity=0.7),
+                        color='rgb(255, 0, 0)'),
                     text=df1.codigo,
                     hoverinfo='text'),
                     ],
