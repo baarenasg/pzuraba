@@ -7,15 +7,12 @@ import plotly.graph_objs as go
 
 mapbox_access_token = "pk.eyJ1IjoiYmFhcmVuYXNnIiwiYSI6ImNrODJlZWwyMjBnYTQzZHBjZDFwcTJkeHgifQ.zPN5UFpYwuXLC9D8xBtAOA"
 
+
 app = dash.Dash(__name__)
 
-server = app.server
+#server = app.server
 #Coordenadas
-df = pd.read_csv("data/puntos_agua.csv",sep=';',decimal=',',encoding="ISO-8859-1")
-
-site_lat = df.lat
-site_lon = df.lon
-locations_name = df.codigo
+dfc = pd.read_csv("data/puntos_agua.csv",sep=';',decimal=',',encoding="ISO-8859-1")
 
 #Series
 df = pd.read_csv("data/niveles.csv",sep=';',decimal=',',encoding="ISO-8859-1")
@@ -41,6 +38,7 @@ app.layout = html.Div([
             options=options,
             value=['PzC01'],
             multi=True,
+            searchable= True,
             style={ 'marginLeft':'30px','marginRight':'30px','display':'inline-block'}),
         html.Button(
             id='submit-button',
@@ -51,37 +49,7 @@ app.layout = html.Div([
 
 
     html.Div([
-        dcc.Graph(id='mapa',
-              figure = {'data':[go.Scattermapbox(
-                      lat=site_lat,
-                      lon=site_lon,
-                      mode='markers',
-                      marker=go.scattermapbox.Marker(
-                          size=17,
-                          color='rgb(255, 0, 0)',
-                          opacity=0.7
-                      ),
-                      text=locations_name,
-                      hoverinfo='text'
-                  )],
-                  'layout':go.Layout(
-                  autosize=False,
-                  width=700,
-                  height=700,
-                  hovermode='closest',
-                  showlegend=False,
-                  mapbox=dict(
-                      accesstoken=mapbox_access_token,
-                      #bearing=0,
-                      center=dict(
-                          lat=7.85,
-                          lon=-76.7
-                      ),
-                      #pitch=0,
-                      zoom=10,
-                      style='dark'
-                  ))},
-            style={'width':'50%', 'height':'100%','display':'inline-block'}),
+        dcc.Graph(id='mapa',style={'width':'50%', 'height':'100%','display':'inline-block'}),
 
         dcc.Graph(id='serie',
               figure = {'data':[go.Scatter(
@@ -120,6 +88,62 @@ def update_graph(n_clicks, stock_ticker):
         'layout': {'title': 'Niveles piezométricos  de ' + ', '.join(stock_ticker), 'hovermode':'closest'}
     }
     return fig
+
+@app.callback(
+    Output('mapa', 'figure'),
+    [Input('submit-button', 'n_clicks')],
+    [State('my_ticker_symbol', 'value')])
+
+def update_map(n_clicks, stock_ticker):
+    df1 = dfc[~dfc['codigo'].isin(stock_ticker)]
+    df2 = dfc[dfc['codigo'].isin(stock_ticker)]
+
+    layout = go.Layout(
+        autosize=True,
+        width=700,
+        height=700,
+        hovermode='closest',
+        showlegend=True,
+        legend_title='<b> Puntos de agua </b>',
+        legend=dict(x=0, y=1,bordercolor="Black",borderwidth=2),
+        mapbox=dict(
+            accesstoken=mapbox_access_token,
+            #bearing=0,
+            center=dict(
+                lat=7.85,
+                lon=-76.7
+            ),
+            #pitch=0,
+            zoom=10,
+            style='dark')
+        )
+    return go.Figure(
+        data = [go.Scattermapbox(
+                    lat=df2.lat,
+                    lon=df2.lon,
+                    mode='markers',
+                    name="Seleccionados",
+                    marker=go.scattermapbox.Marker(
+                        size=17,
+                        color='rgb(0, 0, 255)',
+                        opacity=0.7),
+                    text=df2.codigo,
+                    hoverinfo='text'),
+                go.Scattermapbox(
+                    lat = df1.lat,
+                    lon = df1.lon,
+                    mode='markers',
+                    name="No seleccionados",
+                    marker=go.scattermapbox.Marker(
+                        size=17,
+                        color='rgb(255, 0, 0)',
+                        opacity=0.7),
+                    text=df1.codigo,
+                    hoverinfo='text'),
+                    ],
+        layout=layout,
+        )
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

@@ -1,4 +1,4 @@
-codigo;lat;lon;nombre ;tipo ;estado
+codigo;lat;lon;nombre;tipo ;estado
 PzC01;7,904861111;-76,71997222;Finca Iris Recreo;Piezometro;Piezometro 
 PzC02;7,934638889;-76,70069444;Finca Esperanza;Piezometro;Piezometro 
 PzC03;7,932388889;-76,71811111;Banacol Nva Col 1 mellizo;Piezometro;Piezometro 
