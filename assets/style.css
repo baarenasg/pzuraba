@@ -1,0 +1,91 @@
+/* Custom App CSS Below --------------------------------- */
+/*Fonts ––––––––––––––––––––––––––––––––––––––––––––––––––*/
+/* Main Layout ––––––––––––––––––––––––––––––––––––––––––––––––––*/
+
+
+body {
+  background-color: #f2f2f2;
+  font-family: "Domine";
+  margin: 2%;
+}
+
+.header{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 2px lightgrey;
+  margin: auto 3%
+}
+P {
+  display : flex;
+  font-size: 25px;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  display : flex;
+  font-size: 35px;
+  align-items: center;
+  justify-content: center;
+  flex-basis: 70%;
+  }
+
+#logo {
+  flex-basis: 20%;
+  padding: 1%
+}
+
+.graficas{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.Div_serie{
+  flex-basis: 45%
+}
+
+#mapa{
+  align-items: center;
+  justify-content: center;
+  flex-basis: 45%;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+#serie{
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+.controles{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+.barra{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 2px lightgrey;
+}
+
+#my_ticker_symbol{
+  flex-basis:80%;
+  padding: 2%
+}
+
+#submit-button{
+  flex-basis:20%;
+  margin: 2%;
+  border-radius: 15px;
+  font-size: 20px;
+}

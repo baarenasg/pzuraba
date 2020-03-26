@@ -5,12 +5,11 @@ from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.graph_objs as go
 
-mapbox_access_token = "pk.eyJ1IjoiYmFhcmVuYXNnIiwiYSI6ImNrODJlZWwyMjBnYTQzZHBjZDFwcTJkeHgifQ.zPN5UFpYwuXLC9D8xBtAOA"
-
+mapbox_access_token = "pk.eyJ1IjoiamFja2x1byIsImEiOiJjajNlcnh3MzEwMHZtMzNueGw3NWw5ZXF5In0.fk8k06T96Ml9CLGgKmk81w"
 
 app = dash.Dash(__name__)
 
-server = app.server
+#server = app.server
 #Coordenadas
 dfc = pd.read_csv("data/puntos_agua.csv",sep=';',decimal=',',encoding="ISO-8859-1")
 
@@ -21,56 +20,43 @@ df = df.sort_values(by=['Fecha'])
 
 codigos = list(df.codigo.unique())
 
-punto = df[df['codigo'] == 'PzC01']
-
 options = []
 for tic in codigos:
     options.append({'label':'{}'.format(tic), 'value':tic})
 
 app.layout = html.Div([
-    html.Div([
-        html.Img(className="logo", src= '/assets/logo.png', style={'display':'inline-block'}),
-        html.H1('Red de monitoreo piezométrica del Golfo de Urabá',style={'display':'inline-block'})]),
-    html.Div([
-        html.H3('Seleccione los puntos de monitoreo',style={'marginLeft':'30px','display':'inline-block'}),
-        dcc.Dropdown(
-            id='my_ticker_symbol',
-            options=options,
-            value=['PzC01'],
-            multi=True,
-            searchable= True,
-            style={ 'marginLeft':'30px','marginRight':'30px','display':'inline-block'}),
-        html.Button(
-            id='submit-button',
-            n_clicks=0,
-            children='Enviar',
-            style={'fontSize':24, 'marginLeft':'30px','display':'inline-block'})
-        ]),
+    html.Div(className = "header" ,
+     children = [html.Img(id="logo", src= '/assets/logo.png'),
+                html.H1('Red de monitoreo piezométrica del Golfo de Urabá')]),
 
+    html.P(),
 
-    html.Div([
-        dcc.Graph(id='mapa',style={'width':'50%', 'height':'100%','display':'inline-block'}),
+    html.Div(className = "graficas" ,children =[
+        html.Div(className = 'Div_serie',children =[
+            html.Div(className = 'controles',children=[
+                html.P('Seleccione los puntos de monitoreo'),
+                html.Div(className = 'barra',children = [
+                    dcc.Dropdown(
+                        id='my_ticker_symbol',
+                        options=options,
+                        value=['PzC01'],
+                        multi=True,
+                        searchable= True),
+                    html.Button(
+                        id='submit-button',
+                        n_clicks=0,
+                        children='Enviar')
+                        ])
+                ]),
 
-        dcc.Graph(id='serie',
-              figure = {'data':[go.Scatter(
-                  x = punto['Fecha'],
-                  y = punto['Nivel'],
-                  mode = 'lines',
-                  name = 'PzC01'
-              ),
-              # create traces
-              go.Scatter(
-                  x = punto['Fecha'],
-                  y = punto['Nivel'],
-                  mode = 'markers',
-                  marker=dict(
-                    color='Red'),
-                  showlegend=False
-              )],
-                  'layout':go.Layout(
-                      title = 'Niveles piezométricos de {}'.format('PzC01'))},
-            style={'width':'50%','display':'inline-block', 'vertical-align': 'top'})])
-])
+            html.P(),
+
+            dcc.Graph(id='serie')
+            ]),
+        dcc.Graph(id='mapa'),
+        ])
+    ])
+
 
 @app.callback(
     Output('serie', 'figure'),
@@ -78,16 +64,32 @@ app.layout = html.Div([
     [State('my_ticker_symbol', 'value')])
 
 def update_graph(n_clicks, stock_ticker):
+    layout_serie = go.Layout(
+          title = 'Niveles piezométricos',
+          title_x=0.5,
+          hovermode ='closest',
+          plot_bgcolor = 'rgba(0,0,0,0)',
+          paper_bgcolor = 'rgba(0,0,0,0)',
+          xaxis_title  = "Fechas",
+          yaxis_title = "msnm",)
+
     traces = []
     for tic in stock_ticker:
         punto = df[df['codigo'] == tic]
-        traces.append({'x':punto['Fecha'], 'y': punto['Nivel'], 'mode' : 'lines','name':tic})
-        traces.append({'x':punto['Fecha'], 'y': punto['Nivel'], 'mode' : 'markers', 'marker' : dict(color= 'Red'),'showlegend':False})
-    fig = {
-        'data': traces,
-        'layout': {'title': 'Niveles piezométricos  de ' + ', '.join(stock_ticker), 'hovermode':'closest'}
-    }
-    return fig
+
+        traces.append(go.Scatter(
+            x = punto['Fecha'],
+            y = punto['Nivel'],
+            mode = 'lines',
+            name = tic))
+        traces.append(go.Scatter(
+            x = punto['Fecha'],
+            y = punto['Nivel'],
+            mode = 'markers',
+            marker=dict(
+              color='Red'),
+            showlegend=False))
+    return go.Figure(data = traces ,layout=layout_serie)
 
 @app.callback(
     Output('mapa', 'figure'),
@@ -99,13 +101,14 @@ def update_map(n_clicks, stock_ticker):
     df2 = dfc[dfc['codigo'].isin(stock_ticker)]
 
     layout = go.Layout(
-        autosize=True,
-        width=700,
-        height=700,
+        title = 'Distribución espacial de los puntos de monitoreo',
+        title_x=0.5,
         hovermode='closest',
         showlegend=True,
         legend_title='<b> Puntos de agua </b>',
-        legend=dict(x=0, y=1,bordercolor="Black",borderwidth=2),
+        legend=dict(x=0, y=1,bordercolor="Black",borderwidth=2,bgcolor="White"),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor = 'rgba(0,0,0,0)',
         mapbox=dict(
             accesstoken=mapbox_access_token,
             #bearing=0,
@@ -114,8 +117,8 @@ def update_map(n_clicks, stock_ticker):
                 lon=-76.7
             ),
             #pitch=0,
-            zoom=10,
-            style='dark')
+            zoom=9,
+            style="light")
         )
     return go.Figure(
         data = [go.Scattermapbox(
@@ -125,7 +128,8 @@ def update_map(n_clicks, stock_ticker):
                     name="Seleccionados",
                     marker=go.scattermapbox.Marker(
                         size=17,
-                        color='rgb(0, 0, 255)'),
+                        color='rgb(0, 0, 255)',
+                        opacity=0.7),
                     text=df2.codigo,
                     hoverinfo='text'),
                 go.Scattermapbox(
@@ -135,7 +139,8 @@ def update_map(n_clicks, stock_ticker):
                     name="No seleccionados",
                     marker=go.scattermapbox.Marker(
                         size=17,
-                        color='rgb(255, 0, 0)'),
+                        color='rgb(255, 0, 0)',
+                        opacity=0.7),
                     text=df1.codigo,
                     hoverinfo='text'),
                     ],
