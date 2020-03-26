@@ -9,7 +9,7 @@ mapbox_access_token = "pk.eyJ1IjoiamFja2x1byIsImEiOiJjajNlcnh3MzEwMHZtMzNueGw3NW
 
 app = dash.Dash(__name__)
 
-#server = app.server
+server = app.server
 #Coordenadas
 dfc = pd.read_csv("data/puntos_agua.csv",sep=';',decimal=',',encoding="ISO-8859-1")
 
